@@ -4,12 +4,13 @@
 // using both constructors
 #include<iostream>
 #include<string>
+using namespace std;
 class Student {
 	int rollNo;
 	std::string name;
 	char grade;
 	public :
-		Student(int rollNo, std::string name, char grade) : grade(grade), rollNo(rollN0), name(name) {
+		Student(int rollNo, std::string name, char grade) : grade(grade), rollNo(rollNo), name(name) {
 
 		cout << "the name of this kid is " << name 
 			<< " he scored a grade of" << grade 
