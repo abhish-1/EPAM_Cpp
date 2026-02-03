@@ -1,0 +1,14 @@
+.vs/
+.idea/
+*.exe
+*.o
+*.obj
+*.user
+*.suo
+*.ipch
+*.VC.db
+*.log
+bin/
+build/
+
+

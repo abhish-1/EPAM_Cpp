@@ -5,8 +5,8 @@ using namespace std;
 
 class Shape {
 public:
-    virtual double area() const = 0;        
-    virtual double perimeter() const = 0;   
+    virtual double area()  = 0;        
+    virtual double perimeter()  = 0;   
     virtual ~Shape() = default; 
     //for inheritance + polymorphism,When you use new DerivedClass and store in BaseClass*
 };
