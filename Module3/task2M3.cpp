@@ -7,10 +7,24 @@
 #include<iostream>
 using namespace std;
 class Complex {
+public:
 	double real;
 	double imag;
+	Complex(int a, int b) {
+		this->real = a;
+		this->imag = b;
+	}
+	Complex operator+ (const Complex& c) {
+		return Complex(this->real + c.real, imag + c.imag);
+	}
+	void shoe() {
+		cout << real << " + " << imag << "i" << endl;
+			
+	}
 
 };
 int main() {
-
+	Complex c(5, 6);
+	Complex d = c + d(4.2);
+	d.shoe();
 }

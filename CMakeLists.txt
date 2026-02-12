@@ -8,79 +8,81 @@ project(EPAM_CXX LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# -------------------------------
-# Shared helper library (NO main)
-# -------------------------------
-add_library(notes STATIC
-    encapsulationAbstrictionInheritance/notes.cpp
-)
+set(SRC_ROOT ${CMAKE_SOURCE_DIR})
 
 # -------------------------------
-# Encapsulation / Abstraction / Inheritance
+# Optional helper library (notes)
 # -------------------------------
-add_executable(task3EAI
-    "encapsulationAbstrictionInheritance/task3EAI.cpp"
-    "encapsulationAbstrictionInheritance/main(task3).cpp"
+set(NOTES_PATHS
+    "${SRC_ROOT}/Module2/encapsulationAbstrctionInheritnace/notes.cpp"
+    "${SRC_ROOT}/Module2/encapsulationAbstrctionInheritnace/Notes.cpp"
+    "${SRC_ROOT}/encapsulationAbstrictionInheritance/notes.cpp"
+    "${SRC_ROOT}/encapsulationAbstrictionInheritance/Notes.cpp"
 )
-target_link_libraries(task3EAI PRIVATE notes)
 
-# -------------------------------
-# OOP Tasks
-# -------------------------------
-add_executable(task3
-    OOPTasks/task3.cpp
-)
-target_link_libraries(task3 PRIVATE notes)
+set(NOTES_SOURCES "")
+foreach(p IN LISTS NOTES_PATHS)
+    if(EXISTS "${p}")
+        list(APPEND NOTES_SOURCES "${p}")
+    endif()
+endforeach()
 
-add_executable(task4
-    OOPTasks/TaskRepo/task4.cpp
-)
-target_link_libraries(task4 PRIVATE notes)
-
-add_executable(task5
-    OOPTasks/TaskRepo/task5.cpp
-)
-target_link_libraries(task5 PRIVATE notes)
-
-add_executable(task5ii
-    OOPTasks/TaskRepo/task5ii.cpp
-)
-target_link_libraries(task5ii PRIVATE notes)
-
-add_executable(task7
-    OOPTasks/TaskRepo/task7.cpp
-)
-target_link_libraries(task7 PRIVATE notes)
-
-add_executable(task8
-    OOPTasks/task8.cpp
-)
-target_link_libraries(task8 PRIVATE notes)
-
-add_executable(task9
-    OOPTasks/TaskRepo/task9.cpp
-)
-target_link_libraries(task9 PRIVATE notes)
+if(NOTES_SOURCES)
+    add_library(notes STATIC ${NOTES_SOURCES})
+    message(STATUS "Added optional library 'notes' from: ${NOTES_SOURCES}")
+else()
+    message(STATUS "No notes.cpp found; skipping 'notes' library")
+endif()
 
 # -------------------------------
-# Memory Management Tasks
+# Helper: sanitize target name (replace illegal chars, avoid leading digits)
 # -------------------------------
-add_executable(task2MM
-    Memory_Mgmt/task2MM.cpp
-)
-target_link_libraries(task2MM PRIVATE notes)
+function(sanitize_target_name in out)
+    string(REGEX REPLACE "[^A-Za-z0-9_]" "_" _tmp "${in}")
+    string(REGEX MATCH "^[0-9]" _starts "${_tmp}")
+    if(_starts)
+        set(${out} "exe_${_tmp}" PARENT_SCOPE)
+    else()
+        set(${out} "${_tmp}" PARENT_SCOPE)
+    endif()
+endfunction()
 
-add_executable(task3MM
-    Memory_Mgmt/task3MM.cpp
+# -------------------------------
+# Discover .cpp sources under Module2 and Module3 only
+# -------------------------------
+file(GLOB_RECURSE MODULE2_SOURCES CONFIGURE_DEPENDS
+    "${SRC_ROOT}/Module2/*.cpp"
 )
-target_link_libraries(task3MM PRIVATE notes)
+file(GLOB_RECURSE MODULE3_SOURCES CONFIGURE_DEPENDS
+    "${SRC_ROOT}/Module3/*.cpp"
+)
 
-add_executable(task4MM
-    Memory_Mgmt/task4MM.cpp
-)
-target_link_libraries(task4MM PRIVATE notes)
+message(STATUS "Module2 sources: ${MODULE2_SOURCES}")
+message(STATUS "Module3 sources: ${MODULE3_SOURCES}")
 
-add_executable(task5MM
-    Memory_Mgmt/task5MM.cpp
-)
-target_link_libraries(task5MM PRIVATE notes)
+# -------------------------------
+# Create one executable per .cpp with sanitized (and unique) target names
+# -------------------------------
+foreach(src IN LISTS MODULE2_SOURCES MODULE3_SOURCES)
+    get_filename_component(basename "${src}" NAME_WE)
+    if(basename STREQUAL "notes")
+        continue()
+    endif()
+
+    sanitize_target_name("${basename}" target_name)
+
+    # disambiguate duplicates by using relative path if necessary
+    if(TARGET "${target_name}")
+        file(RELATIVE_PATH relpath "${SRC_ROOT}" "${src}")
+        string(REGEX REPLACE "[/\\\\]" "_" relpath_s "${relpath}")
+        sanitize_target_name("${relpath_s}" target_name)
+    endif()
+
+    add_executable("${target_name}" "${src}")
+
+    if(TARGET notes)
+        target_link_libraries("${target_name}" PRIVATE notes)
+    endif()
+endforeach()
+
+message(STATUS "Total Module2/Module3 sources considered: ${MODULE2_SOURCES} ${MODULE3_SOURCES}")

@@ -8,7 +8,7 @@
 #include<iostream>
 using namespace std;
 class BaseLogger {
-	~ virtual BaseLogger()
+	~virtual BaseLogger()
 };
 class FileLogger : public BaseLogger {
 

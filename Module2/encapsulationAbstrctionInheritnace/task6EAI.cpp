@@ -33,8 +33,8 @@ public:
 		if (engineOn) {
 			speed -= 10;
 			rpm -= 50;
-			if (speed < 0) { speed = 0 };
-			if (rpm < 0) { rpm = 0 };
+			if (speed < 0) { speed = 0; }
+			if (rpm < 0) { rpm = 0; }
 			cout << "The speed is " << speed << endl;
 		}
 		else {
@@ -44,6 +44,7 @@ public:
 
 };
 int main() {
+	Car c1;
 	c1.accelerate();
 	c1.brake();
 }
