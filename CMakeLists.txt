@@ -1,29 +1,14 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required (VERSION 3.8)
 
-# Set the project name
-project(EPAM_Cpp_Training VERSION 1.0)
+project ("EpamLearningPath")
 
-# Set the C++ standard to C++17 or C++20
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# COMMAND TO FIX: Use GLOB_RECURSE to find .cpp files in all subfolders
+file(GLOB_RECURSE SOURCES "module*/*.cpp")
 
-# Optional: Add compiler flags for better debugging and warnings
-if(MSVC)
-    add_compile_options(/W4)
-else()
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
-
-# Identify all .cpp files in the directory
-file(GLOB SOURCE_FILES "*.cpp")
-
-# Loop through each file and create an individual executable
-# This is ideal for training repos where each file is a standalone task
-foreach(SOURCE_FILE ${SOURCE_FILES})
-    # Get the filename without the extension to use as the executable name
-    get_filename_component(EXE_NAME ${SOURCE_FILE} NAME_WE)
+foreach(sourcefile ${SOURCES})
+    # Get the file name (e.g., "poly1")
+    get_filename_component(name ${sourcefile} NAME_WE)
     
-    add_executable(${EXE_NAME} ${SOURCE_FILE})
-    
-    message(STATUS "Added executable: ${EXE_NAME}")
-endforeach()
+    # Create a separate executable for every single file found
+    add_executable(${name} ${sourcefile})
+endforeach()    
