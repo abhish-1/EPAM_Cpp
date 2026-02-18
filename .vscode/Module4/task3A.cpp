@@ -14,26 +14,19 @@ int main(){
         cerr<<"file cant be opened"<<endl;
         return 1;
     }
-    
     string input;
     cout<<"enter the line"<<endl;
-    
-    
     //Need cin.ignore() before getline because cin>>fileName left '\n' in buffer
     cin.ignore();  // Add this line!
     getline(cin, input);
-    
     // check if input is empty or just proceed (getline succeeded)
     if(input.empty()) {
         cerr<<"Empty input provided"<<endl;
     }
-    
     file << input;
-    
     //After writing, file pointer is at END.
     // Need to reset to BEGINNING before reading!
     file.seekg(0, ios::beg);  
-    
     string sentence;
     int sentenceNo = 0;
     
