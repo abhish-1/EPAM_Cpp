@@ -92,9 +92,12 @@
 // Related topics to explore:
 
 
+
 #include<iostream>
 #include<cstring>
 #include<stdexcept>
+#include<cstdlib> 
+#include<ctime>
 using namespace std;
 class MedicalMemoryTracker{
     public:
@@ -102,16 +105,16 @@ class MedicalMemoryTracker{
     static int totalMemDeallocated;
     static void recordAllocation(const char* medicalResource, int size){
         totalMemAllocated += size;
-        cout << medicalResource << ": allocated " << size << " bytes" << endl;  // ✓ Direct cout
+        cout << medicalResource << ": allocated " << size << " bytes" << endl; 
     }
 
     static void recordDeallocation(const char* medicalResource, int size){
         totalMemDeallocated += size;
-        cout << medicalResource << ": deallocated " << size << " bytes" << endl;  // ✓ Direct cout
+        cout << medicalResource << ": deallocated " << size << " bytes" << endl; 
     }
     static void reportLeaks(){
         if(totalMemAllocated==totalMemDeallocated){
-            cout<<"No mempry leaks";
+            cout << "No memory leaks detected!" << endl;
         }
         else{
             cout<<"There is a leak in memory of "<<abs(totalMemAllocated-totalMemDeallocated);
@@ -208,7 +211,7 @@ class PatientVitalMonitor{
 
         delete[] criticalTrendBuffer;
         MedicalMemoryTracker::recordDeallocation("critical Trend Buffer", 1000 * sizeof(int));
-        std::cout << " ritical Trend Buffer freed" << std::endl;
+        std::cout << " Critical Trend Buffer freed" << std::endl;
     }
 };
 
@@ -239,7 +242,7 @@ int main(){
             emergencyMonitor->monitorPatientVitals(10);
         }
         catch (const PatientDataException& e){
-            cout<<e.what();
+            cout<<e.what()<<endl;
         }
     }
     delete emergencyMonitor;
