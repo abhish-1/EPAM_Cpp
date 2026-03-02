@@ -170,9 +170,15 @@ class PatientVitalMonitor{
     }
 
     PatientVitalMonitor(const char* id) : heartRateData(nullptr), bloodPressureData(nullptr), deviceConnected(false) {
-        strcpy(patientId, id);
+        strcpy(patientId, id);   //strcpy(destination, source)
 
         heartRateData= new int[36000];
+        // The medical monitoring system needed large memory blocks (144KB for heart rate data) that exceed typical
+        // stack limits, require runtime sizing, and must persist beyond function calls. Heap-allocated buffers give
+        // explicit control over memory lifetime—crucial for demonstrating exception safety scenarios where 
+        //constructors throw after partial allocation, causing memory leaks that wouldn't be possible with stack arrays.
+        // The term "buffer" specifically indicates temporary storage for streaming data, which matches the continuous
+        // patient monitoring use case.
         MedicalMemoryTracker::recordAllocation("Heart Rate Buffer", 36000 * sizeof(int));
         
         bloodPressureData = new float[18000];
@@ -238,14 +244,14 @@ int main(){
         }
 
         if (setupSuccessful && emergencyMonitor){
-        try{
-            emergencyMonitor->monitorPatientVitals(10);
+            try{
+                emergencyMonitor->monitorPatientVitals(10);
+            }
+            catch (const PatientDataException& e){
+                cout<<e.what()<<endl;
+            }
         }
-        catch (const PatientDataException& e){
-            cout<<e.what()<<endl;
-        }
-    }
-    delete emergencyMonitor;
+        delete emergencyMonitor;
     }
     
     MedicalMemoryTracker::reportLeaks();
