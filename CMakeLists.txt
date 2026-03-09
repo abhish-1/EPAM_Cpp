@@ -10,5 +10,6 @@ foreach(sourcefile ${SOURCES})
     get_filename_component(name ${sourcefile} NAME_WE)
     
     # Create a separate executable for every single file found
-    add_executable(${name} ${sourcefile})
+    add_executable(${name} ${sourcefile}
+            Module5/a.cpp)
 endforeach()    
