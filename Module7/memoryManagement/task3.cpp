@@ -45,3 +45,11 @@ public:
         std::cout << "SensorReport for " << sensorName << " destroyed." << std::endl;
     }
 };
+int main(){
+    int rawSensorValue = 75; 
+    std::string sensorIdentifier = "Pressure_A01";
+    unique_ptr<SensorReport> criticalReportPtr = make_unique<SensorReport>(rawSensorValue,sensorIdentifier);
+    std::cout << "\nProcessing critical sensor report:" << std::endl; 
+    criticalReportPtr->displayDetails();
+    // std::unique_ptr<SensorReport> anotherReport = criticalReportPtr;
+}
