@@ -1,5 +1,8 @@
 #include<iostream>
 #include<vector>
+#include<map>
+#include<list>
+#include<string>
 using namespace std;
 
 struct Student {
@@ -7,11 +10,11 @@ struct Student {
     std::string name;
     bool active;
     double grade;
+    Student() {} 
      
     Student(int i, std::string n, bool a, double g) : id(i), name(n), active(a), grade(g) {}
 };
  
- // ========== DANGEROUS CODE TO REFACTOR ==========   
  class StudentRoster {
  private:
     std::vector<Student> studentsVector;      // Using vector
@@ -19,18 +22,16 @@ struct Student {
     std::map<int, Student> studentsMap;       // Using map
      
  public:
-     // BUG 1: Vector erase with range-based for loop
      void removeFailedStudentsVector() {
-        vector<StudentVector> vec;
-         for (auto& student : studentsVector) {
-             if (student.grade < 60.0) {
-                 // BUG: Invalidates iterator
-                 vec.push(&student);
+         for (auto it = studentsVector.begin();it<studentsVector.end();) {
+             if (it->grade < 60.0) {
+                it = studentsVector.erase(it);
              }
-         }
-         for(auto& student:vec){
-            studentsVector.erase(&student);
-         }
+             else{
+                it++;
+             }
+        }
+        
      }
      
      // BUG 2: Manual loop with wrong iterator handling
@@ -38,30 +39,35 @@ struct Student {
          auto it = studentsList.begin();
          while (it != studentsList.end()) {
              if (!it->active) {
-                 studentsList.erase(it);
+                 it = studentsList.erase(it);
                  // BUG: Continues using invalid iterator
-             }
+             }else{
              ++it;  // BUG: Double increment after erase
+             }
          }
      }
      
      // BUG 3: Map erase with potential issues
      void removeLowGradesMap(double threshold) {
-         for (auto it = studentsMap.begin(); it != studentsMap.end(); ++it) {
+         for (auto it = studentsMap.begin(); it != studentsMap.end(); ) {
              if (it->second.grade < threshold) {
                  // BUG: Invalidates current iterator
-                 studentsMap.erase(it);
+                it = studentsMap.erase(it);
              }
+             else {it++;}
          }
      }
      
      // BUG 4: Trying to erase while iterating incorrectly
      void cleanupVector() {
-         for (size_t i = 0; i < studentsVector.size(); ++i) {
-             if (studentsVector[i].grade < 60.0 || !studentsVector[i].active) {
+         for (auto it = studentsVector.begin(); it< studentsVector.end();) {
+             if (it->grade < 60.0 || it->active == false) {
                  // BUG: Index invalidation
-                 studentsVector.erase(studentsVector.begin() + i);
+                 it = studentsVector.erase(it);
                  // BUG: Skips next element
+             }
+             else{
+                 ++it;
              }
          }
      }
