@@ -1,31 +1,26 @@
 #include <iostream>
 #include <thread>
+#include <semaphore>
 #include <vector>
-#include <mutex>
 
-int counter = 0;
-std::mutex m;
+std::counting_semaphore<2> sig(2); 
 
-void work() {
-    for (int i = 0; i < 1000; i++) {
-        std::lock_guard<std::mutex> lock(m);
-        counter++; // protected
-    }
+void worker(int id) {
+    std::cout << "Thread " << id << " is waiting...\n";
+    sig.acquire(); // Decrement counter
+    
+    std::cout << "Thread " << id << " entered the room!\n";
+    std::this_thread::sleep_for(std::chrono::seconds(4)); // Simulate work
+    
+    std::cout << "Thread " << id << " is leaving.\n";
+    sig.release(); // Increment counter
 }
 
 int main() {
     std::vector<std::thread> threads;
-
-    for (int i = 0; i < 5; i++) {
-        threads.emplace_back(work);
+    for (int i = 0; i < 3; ++i) {
+        threads.emplace_back(worker, i);
     }
-
-    for (auto& t : threads) {
-        t.join();
-    }
-
-    std::cout << "Final counter = " << counter << std::endl;
-    std::cout << "Expected = 5000" << std::endl;
-
+    for (auto& t : threads) t.join();
     return 0;
 }
