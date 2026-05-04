@@ -10,8 +10,15 @@
 *.log
 bin/
 build/
-
+.exe
 playground.cpp
 
 
+# # ignore everything
+# *
 
+# # allow folders
+# !*/
+
+# # allow only cpp files
+# !*.cpp
