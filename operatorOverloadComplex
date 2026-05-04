@@ -1,0 +1,44 @@
+#include <iostream>
+using namespace std;
+
+class Complex {
+    int real, imag;
+
+public:
+    Complex operator + (Complex c) {
+        Complex temp;
+        temp.real = real + c.real;
+        temp.imag = imag + c.imag;
+        return temp;
+    }
+    friend istream& operator >> (istream& in, Complex& c) {
+        in >> c.real >> c.imag;
+        return in;
+    }
+    friend ostream& operator << (ostream& out, const Complex& c) {
+        out << c.real << " + " << c.imag << "i";
+        return out;
+    }
+    // declare as friend (no definition here)
+    // friend istream& operator>>(istream&, Complex&);
+    // friend ostream& operator<<(ostream&, const Complex&);
+};
+
+
+// istream& operator>>(istream& in, Complex& c) {
+//     in >> c.real >> c.imag;
+//     return in;
+// }
+
+// ostream& operator<<(ostream& out, const Complex& c) {
+//     out << c.real << " + " << c.imag << "i";
+//     return out;
+// }
+
+int main() {
+    Complex c1, c2, result;
+
+    cin >> c1 >> c2;    
+    result = c1 + c2;   
+    cout << result;    
+}
